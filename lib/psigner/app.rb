@@ -6,29 +6,29 @@ def load_configuration(file, name)
     puts "There's no configuration file at #{file}!"
     exit!
   end
-  Psigner.const_set(name, YAML.load_file(file))
+  PSigner.const_set(name, YAML.load_file(file))
 end
 
-module Psigner
+module PSigner
   class Application < Sinatra::Base
 
     configure do
       load_configuration("config/config.yml", "APP_CONFIG")
     end
 
-    set :public_folder, File.join(File.dirname(__FILE__), 'public')
-    set :views, File.join(File.dirname(__FILE__), 'views')
-
     # Sign certificates /api/sign?host=hostname.to.be.signed?secret=sharedsecret
-    post '/api/sign' do
+    post '/api/cert' do
       authenticated_only!
-
       requires_param :certname
 
-      sign_cert(params[:certname])
+      success, output = sign_cert(params[:certname])
+      unless success
+        halt 500, {'Content-Type' => 'text/plain'}, output
+      end
+      "OK"
     end
 
-    get '/api/sign' do
+    get '/api/cert' do
       'You need to POST API signing requests'
     end
 
@@ -62,12 +62,8 @@ module Psigner
       alias :requires_param :requires_params
 
       def sign_cert(certname)
-        begin
-          signed = `puppet certificate --ca-location local --mode master sign #{certname}`
-        rescue => e
-          return "Signing failed because: #{e}"
-        end
-        signed
+        stdout = `puppet cert sign #{certname}`
+        [$?.exitstatus == 0, stdout]
       end
 
       def clean_cert(certname)

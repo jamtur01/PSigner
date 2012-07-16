@@ -12,13 +12,13 @@ options = {}
 optparse = OptionParser.new do |opts|
   # Set a banner, displayed at the top
   # of the help screen.
-  opts.banner = "Usage: Psigner [options] ..."
+  opts.banner = "Usage: PSigner [options] ..."
 
   opts.separator ''
   opts.separator "Configuration options:"
 
   opts.on_tail( "-v", "--version", "Show version") do
-    puts "Psigner version #{Psigner::VERSION}"
+    puts "PSigner version #{PSigner::VERSION}"
     exit
   end
 
@@ -33,7 +33,7 @@ end
 
 begin
   optparse.parse!
-  Psigner::Application.run!
+  PSigner::Application.run!
 rescue OptionParser::InvalidArgument, OptionParser::InvalidOption, OptionParser::MissingArgument
   puts $!.to_s
   puts optparse

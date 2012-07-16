@@ -18,7 +18,7 @@ end
 ENV['RACK_ENV'] = "test"
 
 def app
-  @app ||= Psigner::Application
+  @app ||= PSigner::Application
 end
 
 # quick convenience methods..

@@ -4,7 +4,7 @@ require "version"
 
 Gem::Specification.new do |s|
   s.name        = "psigner"
-  s.version     = Psigner::VERSION
+  s.version     = PSigner::VERSION
   s.authors     = ["James Turnbull"]
   s.email       = ["james@lovedthanlost.net"]
   s.homepage    = ""
