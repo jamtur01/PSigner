@@ -21,27 +21,45 @@ module Psigner
 
     # Sign certificates /api/sign?host=hostname.to.be.signed?secret=sharedsecret
     post '/api/sign' do
-      halt 400, "No parameters specified" if params.empty?
-      unless params[:secret] && params[:certname]
-        halt 400, "You must specify both a shared secret and a certificate name."
-      end
-      secret, certname = params[:secret], params[:certname]
-      if check_secret(secret)
-        sign_cert(certname)
-      else
-       halt 401, "Shared secret does not match - signing unauthorized."
-      end
+      authenticated_only!
+
+      requires_param :certname
+
+      sign_cert(params[:certname])
     end
 
     get '/api/sign' do
       'You need to POST API signing requests'
     end
 
-    helpers do
+    delete '/api/cert' do
+      authenticated_only!
+      requires_param :certname
 
-      def check_secret(secret)
-        secret == APP_CONFIG["secret"]
+      success, output = clean_cert(params[:certname])
+      unless success
+        halt 500, {'Content-Type' => 'text/plain'}, output
       end
+      "OK"
+    end
+
+    helpers do
+      def authenticated_only!
+        unless params[:secret] == APP_CONFIG['secret']
+          halt 401, 'Unauthorised.  Shared secret does not match.'
+        end
+      end
+
+      def requires_params(*needed)
+        halt 400, 'No parameters specified' if params.empty?
+
+        needed.each do |param|
+          unless params[param]
+            halt 400, "You must specify #{param.to_s} as a parameter"
+          end
+        end
+      end
+      alias :requires_param :requires_params
 
       def sign_cert(certname)
         begin
@@ -52,6 +70,10 @@ module Psigner
         signed
       end
 
+      def clean_cert(certname)
+        stdout = `puppet cert clean #{certname}`
+        [$?.exitstatus == 0, stdout]
+      end
     end
   end
 end
