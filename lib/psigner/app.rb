@@ -32,6 +32,17 @@ module Psigner
       'You need to POST API signing requests'
     end
 
+    delete '/api/cert' do
+      authenticated_only!
+      requires_param :certname
+
+      success, output = clean_cert(params[:certname])
+      unless success
+        halt 500, {'Content-Type' => 'text/plain'}, output
+      end
+      "OK"
+    end
+
     helpers do
       def authenticated_only!
         unless params[:secret] == APP_CONFIG['secret']
@@ -57,6 +68,11 @@ module Psigner
           return "Signing failed because: #{e}"
         end
         signed
+      end
+
+      def clean_cert(certname)
+        stdout = `puppet cert clean #{certname}`
+        [$?.exitstatus == 0, stdout]
       end
     end
   end

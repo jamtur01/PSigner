@@ -10,6 +10,11 @@ signing of Puppet client certificates via an API call, by passing the
 
 You can configure the shared secret via the `config.yml` file in the `config` directory.
 
+## Cleaning out an old cert
+To revoke and remove a cert from Puppet's CA
+
+    $ curl -d 'secret=SHAREDSECRET' -d 'certname=bob' -X DELETE http://localhost:4567/api/cert
+
 ## Running standalone
 Simply run the ``bundle`` and then ``rackup`` commands. 
 
