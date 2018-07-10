@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.email       = ["james@lovedthanlost.net"]
   s.homepage    = ""
   s.summary     = %q{A simple Sinatra app to sign Puppet certificate requests.}
-  s.description = %q{TODO: Write a gem description}
+  s.description = %q{Sinatra app to sign Puppet certificate requests.}
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
