@@ -11,7 +11,7 @@ GEM
     mocha (1.8.0)
       metaclass (~> 0.0.1)
     mustermann (1.0.3)
-    rack (2.0.8)
+    rack (2.2.3)
     rack-protection (2.0.5)
       rack
     rack-test (1.1.0)
